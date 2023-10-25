@@ -18,6 +18,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/moust/miniconda3/envs/icet2/lib/
 
 cd /groups/icecube/moust/work/IceCubeEncoderTransformer
 
+# source activate icet2
 source /groups/icecube/moust/miniconda3/envs/graphnet/bin/activate icet2
 
 srun python3 src/train.py experiment=kaggle_2nd_place_inelasticity_SLURM

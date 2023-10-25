@@ -148,6 +148,8 @@ dmypy.json
 configs/local/default.yaml
 /data/
 /logs/
+/lightning_logs/
+/SLURM_logs/
 .env
 
 # Aim logging
