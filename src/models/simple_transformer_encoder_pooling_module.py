@@ -5,7 +5,7 @@ from lightning import LightningModule
 from torchmetrics import MaxMetric, MinMetric, MeanMetric
 # from torchmetrics.classification.accuracy import Accuracy
 
-class SimpleTransformerEncoderPoolingLitModule(LightningModule):
+class Kaggle2ndPlaceLitModule(LightningModule):
     """Example of LightningModule for MNIST classification.
 
     A LightningModule organizes your PyTorch code into 6 sections:
@@ -60,9 +60,9 @@ class SimpleTransformerEncoderPoolingLitModule(LightningModule):
         pass
 
     def model_step(self, batch: Any):
-        x, y, pad_mask = batch
+        x, y = batch
         # print(x.shape, pad_mask.shape)
-        preds = self.forward(x, pad_mask)
+        preds = self.forward(x)
         loss = self.loss_fn(preds, y)
         # preds = torch.argmax(logits, dim=1)
         return loss, preds, y
@@ -139,5 +139,5 @@ class SimpleTransformerEncoderPoolingLitModule(LightningModule):
 
 
 if __name__ == "__main__":
-    _ = SimpleTransformerEncoderPoolingLitModule(None, None, None)
+    _ = Kaggle2ndPlaceLitModule(None, None, None)
 

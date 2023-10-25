@@ -1,0 +1,137 @@
+# @package _global_
+
+# to execute this experiment run:
+# python src/train.py experiment=opt_test
+
+defaults:
+  - override /data: kaggle_2nd_place_dataset.yaml
+  - override /model: kaggle_2nd_place_model.yaml
+  - override /callbacks: default.yaml
+  - override /trainer: default.yaml
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["transformer", "kaggle_2nd_place",energy_log10", "small_model", "logcosh_loss"]
+
+seed: 12345
+
+trainer:
+  min_epochs: 1
+  max_epochs: 5
+  # precision: 16 #16-mixed
+  # strategy: ddp
+  accelerator: gpu
+  devices: [1]
+  num_nodes: 1
+  # reload_dataloaders_every_n_epochs: 1
+  # sync_batchnorm: True
+  # limit_train_batches: 10
+  # limit_val_batches: 10
+  # limit_test_batches: 10
+  
+
+  
+model:
+  loss_fn:
+    _target_: torchmetrics.LogCoshError #torch.nn.MSELoss
+
+  model:
+    dim: 192 #192 384 #768
+    dim_base: 128
+    depth: 12
+    use_checkpoint: False
+    head_size: 32
+    depth_rel: 4
+    n_rel: 1
+    dim_out: 1
+
+
+data:
+  target_cols: "energy"
+  num_workers: 16
+  batch_sizes: [ 4096, 2048, 2048, 2048, 2048, 2048, 1024, 1024, 1024, 1024, 512, 512, 512, 512, 512, 512, 256, 128, 128, 128, 64, 64, 32, 32, 16]
+  chunk_csv_train: 
+  - /groups/icecube/moust/storage/chunked_event_no/interval_5_8_events_67906_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_8_10_events_45082_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_10_12_events_43671_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_12_14_events_41874_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_14_16_events_40284_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_16_18_events_39568_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_18_20_events_37717_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_20_23_events_52914_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_23_26_events_48504_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_26_30_events_58138_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_30_35_events_62031_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_35_40_events_51977_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_40_45_events_43484_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_45_50_events_36959_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_50_60_events_58701_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_60_70_events_44494_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_70_80_events_34616_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_80_100_events_50609_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_100_150_events_72776_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_150_200_events_38790_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_200_250_events_24514_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_250_300_events_16919_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_300_400_events_21783_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_400_500_events_13114_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_500_600_events_8468_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_train.csv
+  chunk_csv_test:
+  - /groups/icecube/moust/storage/chunked_event_no/interval_5_8_events_67906_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_8_10_events_45082_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_10_12_events_43671_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_12_14_events_41874_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_14_16_events_40284_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_16_18_events_39568_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_18_20_events_37717_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_20_23_events_52914_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_23_26_events_48504_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_26_30_events_58138_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_30_35_events_62031_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_35_40_events_51977_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_40_45_events_43484_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_45_50_events_36959_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_50_60_events_58701_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_60_70_events_44494_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_70_80_events_34616_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_80_100_events_50609_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_100_150_events_72776_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_150_200_events_38790_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_200_250_events_24514_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_250_300_events_16919_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_300_400_events_21783_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_400_500_events_13114_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_500_600_events_8468_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_test.csv
+  chunk_csv_val:
+  - /groups/icecube/moust/storage/chunked_event_no/interval_5_8_events_67906_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_8_10_events_45082_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_10_12_events_43671_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_12_14_events_41874_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_14_16_events_40284_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_16_18_events_39568_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_18_20_events_37717_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_20_23_events_52914_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_23_26_events_48504_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_26_30_events_58138_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_30_35_events_62031_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_35_40_events_51977_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_40_45_events_43484_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_45_50_events_36959_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_50_60_events_58701_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_60_70_events_44494_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_70_80_events_34616_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_80_100_events_50609_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_100_150_events_72776_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_150_200_events_38790_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_200_250_events_24514_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_250_300_events_16919_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_300_400_events_21783_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_400_500_events_13114_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+  - /groups/icecube/moust/storage/chunked_event_no/interval_500_600_events_8468_SplitInIcePulses_dynedge_v2_Pulses_DeepCoreFilter_val.csv
+
+
+logger:
+  wandb:
+    tags: ${tags}
+    group: "transformer"

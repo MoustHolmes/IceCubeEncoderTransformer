@@ -1,0 +1,5 @@
+
+attention_weight_writer_callback:
+  _target_: src.callbacks.AttentionWeightsWriterCallback
+  save_path: "/groups/icecube/moust/work/IceCubeEncoderTransformer/prediction/attention_weights.parquet" 
+  #${paths:output}$/beta_predictions.csv

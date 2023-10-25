@@ -1,0 +1,75 @@
+# @package _global_
+
+# to execute this experiment run:
+# python src/train.py experiment=opt_test
+
+defaults:
+  - override /data: kaggle_2nd_place_dataset.yaml
+  - override /model: kaggle_2nd_place_model.yaml
+  - override /callbacks: default.yaml
+  - override /trainer: default.yaml
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["transformer", "kaggle_2nd_place","inelasticity_beta_loss", "best_small_model"]
+
+seed: 12345
+
+trainer:
+  min_epochs: 1
+  max_epochs: 24 #12
+  # precision: 16 #16-mixed
+  # strategy: ddp
+  accelerator: gpu
+  devices: [0]
+  num_nodes: 1
+  gradient_clip_val: 997.3829302377867
+  accumulate_grad_batches: 1
+  # reload_dataloaders_every_n_epochs: 1
+  # sync_batchnorm: True
+  # limit_train_batches: 20
+  # limit_val_batches: 10
+  # limit_test_batches: 10
+  
+model:
+  loss_fn:
+    _target_: src.models.components.loss_functions.BetaDistLoss
+  optimizer:
+    _target_: torch.optim.AdamW
+    _partial_: true
+    lr: 0.0009185781685917284
+    eps: 0.0000001
+    weight_decay: 0.04175503203694001
+  scheduler:
+    _target_: torch.optim.lr_scheduler.OneCycleLR
+    _partial_: true
+    epochs: 24
+    steps_per_epoch: 8
+    max_lr: 0.000459304040417265
+    pct_start: 0.03860078236711323
+  model:
+    dim: 192 #192 384 #768
+    dim_base: 128
+    depth: 12
+    use_checkpoint: False
+    head_size: 32
+    depth_rel: 4
+    n_rel: 1
+    dim_out: 2
+
+
+data:
+  target_cols: "inelasticity"
+  num_workers: 12
+
+callbacks:
+  early_stopping:
+    min_delta: 0.
+    patience: 5
+    divergence_threshold: 10.
+
+logger:
+  wandb:
+    tags: ${tags}
+    group: "transformer"

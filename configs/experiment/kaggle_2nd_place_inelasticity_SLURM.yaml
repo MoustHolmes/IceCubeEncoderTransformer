@@ -1,0 +1,66 @@
+# @package _global_
+
+# to execute this experiment run:
+# python src/train.py experiment=opt_test
+
+defaults:
+  - override /data: kaggle_2nd_place_dataset.yaml
+  - override /model: kaggle_2nd_place_model.yaml
+  - override /callbacks: default.yaml
+  - override /trainer: gpu.yaml
+  # - override /logger: wandb.yaml
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["transformer", "kaggle_2nd_place", "inelasticity_beta_loss", "sweep_1"]
+
+seed: 12345
+
+trainer:
+  min_epochs: 1
+  max_epochs: 3
+  # precision: "bf16" #16,16-mixed
+  # strategy: ddp
+  accelerator: gpu
+  devices: 1
+  num_nodes: 1
+  # sync_batchnorm: True
+  gradient_clip_val: 10.0
+  accumulate_grad_batches: 2
+  use_distributed_sampler: False
+  # reload_dataloaders_every_n_epochs: 1
+  limit_train_batches: 20
+  limit_val_batches: 10
+  limit_test_batches: 10
+  
+model:
+  loss_fn:
+    _target_: src.models.components.loss_functions.BetaDistLoss
+  scheduler:
+    _target_: torch.optim.lr_scheduler.OneCycleLR
+    _partial_: true
+    epochs: 3
+    steps_per_epoch: 1
+    max_lr: 0.0005
+    pct_start: 0.01
+  model:
+    dim: 192 #192 384 #768
+    dim_base: 128
+    depth: 12
+    use_checkpoint: False
+    head_size: 32
+    depth_rel: 4
+    n_rel: 1
+    dim_out: 2
+
+
+data:
+  target_cols: "inelasticity"
+  num_workers: 12
+
+
+logger:
+  wandb:
+    tags: ${tags}
+    group: "Optune_sweep_1"

@@ -8,6 +8,8 @@ from lightning import Callback, LightningDataModule, LightningModule, Trainer
 from lightning.pytorch.loggers import Logger
 from omegaconf import DictConfig
 
+
+
 pyrootutils.setup_root(__file__, indicator=".project-root", pythonpath=True)
 # ------------------------------------------------------------------------------------ #
 # the setup_root above is equivalent to:
@@ -85,10 +87,6 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
     if cfg.get("train"):
         log.info("Starting training!")
         trainer.fit(model=model, datamodule=datamodule, ckpt_path=cfg.get("ckpt_path"))
-        # print("Shutting down dataloaders")
-        # datamodule.val_dataloader2.shutdown()
-        # datamodule.test_dataloader2.shutdown()
-        # datamodule.train_dataloader2.shutdown()
 
     train_metrics = trainer.callback_metrics
 
@@ -98,12 +96,26 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
         if ckpt_path == "":
             log.warning("Best ckpt not found! Using current weights for testing...")
             ckpt_path = None
+        # trainer.test(model=model, datamodule=datamodule, ckpt_path=ckpt_path)
+        # log.info(f"Best ckpt path: {ckpt_path}")
         trainer.test(model=model, datamodule=datamodule, ckpt_path=ckpt_path)
-        # print("Shutting down dataloaders")
-        # datamodule.val_dataloader2.shutdown()
-        # datamodule.test_dataloader2.shutdown()
-        # datamodule.train_dataloader2.shutdown()
         log.info(f"Best ckpt path: {ckpt_path}")
+        
+
+        # Extract predictions and labels from outputs and concatenate them into single tensors
+        # preds = torch.cat([x['preds'] for x in outputs])
+        # targets = torch.cat([x['targets'] for x in outputs])
+
+        # # Convert tensors to numpy arrays
+        # preds_np = preds.cpu().numpy()
+        # targets_np = targets.cpu().numpy()
+
+        # # Create DataFrame and save to CSV
+        # df = pd.DataFrame({
+        #     'predictions': preds_np.flatten(),  # flatten in case preds_np is not 1-D
+        #     'targets': targets_np.flatten(),  # flatten in case targets_np is not 1-D
+        # })
+        # df.to_csv(cfg.output_csv_path, index=False)
 
         
     
@@ -111,19 +123,9 @@ def train(cfg: DictConfig) -> Tuple[dict, dict]:
 
     # merge train and test metrics
     metric_dict = {**train_metrics, **test_metrics}
-    # print()
-    # print(trainer.received_sigterm)
     if trainer.received_sigterm:
         print("got sigterm")
-    # datamodule.shutdown()
-    # trainer.train_dataloader.shutdown()
-    # trainer.val_dataloaders.shutdown()
-    # trainer.test_dataloaders.shutdown()
-    # datamodule.val_dataloader2.shutdown()
-    # datamodule.test_dataloader2.shutdown()
-    # datamodule.train_dataloader2.shutdown()
-    # datamodule.rs.finalize()
-    # print()
+
     return metric_dict, object_dict
 
 

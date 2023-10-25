@@ -48,5 +48,8 @@ compile: False
 # simply provide checkpoint path to resume training
 ckpt_path: null
 
+# specify where to save output test csv
+output_csv_path: "/groups/icecube/moust/storage/test_predictions/test_predictions.csv"
+
 # seed for random number generators in pytorch, numpy and python.random
 seed: null

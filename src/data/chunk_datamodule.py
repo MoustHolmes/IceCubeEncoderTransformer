@@ -62,7 +62,12 @@ class ChunkDataset(Dataset):
         # Query the feature variables from the pulsemap table for the given event number
         self.c.execute(f"SELECT {input_query} FROM {self.pulsemap} WHERE event_no = ?", (event_no,))
         pulsemap_data = self.c.fetchall()
-        return torch.tensor(truth_value, dtype=torch.float32), torch.tensor(pulsemap_data, dtype=torch.float32)
+        pulsemap_data = torch.tensor(pulsemap_data, dtype=torch.float32)
+        pulsemap_data[:,:2] = pulsemap_data[:,:2]/500
+        pulsemap_data[:,3] = (pulsemap_data[:,3]-1e4)/3e4
+        pulsemap_data[:,4] = torch.log10(pulsemap_data[:,4])
+
+        return #torch.tensor(truth_value, dtype=torch.float32), torch.tensor(pulsemap_data, dtype=torch.float32)
     
     def close_connection(self) -> None:
         self.conn.close()

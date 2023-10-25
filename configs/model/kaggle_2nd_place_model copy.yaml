@@ -1,0 +1,33 @@
+_target_: src.models.kaggle_2nd_place_module.Kaggle2ndPlaceLitModule
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.0005
+  weight_decay: 0.05
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.OneCycleLR
+  _partial_: true
+  total_steps: 8
+  max_lr: 0.0005
+  pct_start: 0.01
+
+# loss_fn:
+#   _target_: torchmetrics.LogCoshError # torch.nn.MSELoss
+
+  # scheduler:
+  # _target_: torch.optim.lr_scheduler.CosineAnnealingLR
+  # _partial_: true
+  # T_max: 8
+
+model:
+  _target_: src.models.components.kaggle_2nd_place_model.DeepIceModel
+  dim: 192 #192 384 #768
+  dim_base: 128
+  depth: 12
+  use_checkpoint: False
+  head_size: 32
+  depth_rel: 4
+  n_rel: 1
+  dim_out: 1

@@ -3,6 +3,8 @@ defaults:
   - early_stopping.yaml
   - model_summary.yaml
   - rich_progress_bar.yaml
+  - beta_prediction_writer_callback.yaml
+  - attention_weight_writer_callback.yaml
   - _self_
 
 model_checkpoint:
@@ -15,8 +17,14 @@ model_checkpoint:
 
 early_stopping:
   monitor:  "val/loss" #"val/acc"
-  patience: 100
+  patience: 3
   mode: "min" #"max" "min"
+
+beta_prediction_writer_callback:
+  save_path: ${paths.output_dir}/beta_predictions.csv
+
+attention_weight_writer_callback:
+  save_path: ${paths.output_dir}/attention_weights.db
 
 model_summary:
   max_depth: -1
